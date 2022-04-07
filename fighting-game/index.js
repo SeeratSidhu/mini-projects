@@ -8,11 +8,6 @@ c.fillRect(0, 0, canvas.width, canvas.height);
 
 const gravity = 0.7;
 
-
-
-
-
-
 //blueprint of our players; input position of the players
 class Sprite {
   constructor({ position, velocity, color = "red", offset }) {
@@ -26,7 +21,7 @@ class Sprite {
     this.attackWeapon = {
       position: {
         x: this.position.x,
-        y: this.position.y
+        y: this.position.y,
       },
       offset,
       width: 100,
@@ -42,15 +37,16 @@ class Sprite {
     c.fillRect(this.position.x, this.position.y, this.width, this.height);
 
     //weapon
-    c.fillStyle = "yellow";
-    c.fillRect(
-      this.attackWeapon.position.x,
-      this.attackWeapon.position.y,
-      this.attackWeapon.width,
-      this.attackWeapon.height
-    );
+    if (this.isAttacking) {
+      c.fillStyle = "yellow";
+      c.fillRect(
+        this.attackWeapon.position.x,
+        this.attackWeapon.position.y,
+        this.attackWeapon.width,
+        this.attackWeapon.height
+      );
+    }
   }
-
 
   //movement of players left/right(x), up/down(y), adding gravity makes sure the players jumps and comes back
   update() {
@@ -70,38 +66,28 @@ class Sprite {
     }
   }
 
-
   //track the attack
   attack() {
     this.isAttacking = true;
 
     setTimeout(() => {
       this.isAttacking = false;
-    }, 100)
+    }, 100);
   }
 }
-
-
-
-
-
-
-
 
 const player = new Sprite({
   position: { x: 0, y: 0 },
   velocity: { x: 0, y: 0 },
-  offset : { x: 0, y: 0 }
+  offset: { x: 0, y: 0 },
 });
 
 const enemy = new Sprite({
   position: { x: 400, y: 100 },
   velocity: { x: 0, y: 0 },
   color: "blue",
-  offset: { x: -50, y: 0 }
+  offset: { x: -50, y: 0 },
 });
-
-
 
 const keys = {
   a: {
@@ -124,13 +110,19 @@ const keys = {
   },
 };
 
-
-
-
-
+function rectangleCollision({ rectangle1, rectangle2 }) {
+  return (
+    rectangle1.attackWeapon.position.x + rectangle1.attackWeapon.width >=
+      rectangle2.position.x && rectangle1.attackWeapon.position.x <=
+      rectangle2.position.x + rectangle2.width &&
+    rectangle1.attackWeapon.position.y + rectangle1.attackWeapon.height >=
+      rectangle2.position.y &&
+    rectangle1.attackWeapon.position.y <=
+      rectangle2.position.y + rectangle2.height
+  );
+}
 
 function animate() {
-
   // put in the function you want to call again and again
   window.requestAnimationFrame(animate);
 
@@ -144,9 +136,6 @@ function animate() {
   //moving player left and right on keydown; so even if multiple keys are pressed at the same time, it moves
   player.velocity.x = 0;
   enemy.velocity.x = 0;
-
-
-
 
   if (keys.a.pressed && player.lastKey === "a") {
     player.velocity.x = -5;
@@ -165,28 +154,32 @@ function animate() {
     enemy.velocity.x = 5;
   }
 
-
-
-
   //detect collision
   if (
-    player.attackWeapon.position.x + player.attackWeapon.width >=
-      enemy.position.x &&
-    player.attackWeapon.position.x <= enemy.position.x + enemy.width &&
-    player.attackWeapon.position.y + player.attackWeapon.height >= enemy.position.y &&
-    player.attackWeapon.position.y <= enemy.position.y + enemy.height &&
+    rectangleCollision({
+      rectangle1: player,
+      rectangle2: enemy,
+    }) &&
     player.isAttacking
   ) {
     player.isAttacking = false;
-    console.log("ATACKSSSS");
+    console.log("ATTACKSSSS");
+  }
+  if (
+    rectangleCollision({
+      rectangle1: enemy,
+      rectangle2: player,
+    }) &&
+    enemy.isAttacking
+  ) {
+    enemy.isAttacking = false;
+    console.log("ENEMY ATTACKSSSS");
   }
 }
 
 //activate the animation loop
 
 animate();
-
-
 
 //Event Listeners; Control keys
 
@@ -207,7 +200,7 @@ window.addEventListener("keydown", (event) => {
 
     case " ":
       player.attack();
-      break; 
+      break;
 
     //enemy moves
     case "ArrowRight":
@@ -222,10 +215,11 @@ window.addEventListener("keydown", (event) => {
     case "ArrowUp":
       enemy.velocity.y = -20;
       break;
+    case "ArrowDown":
+      enemy.attack();
+      break;
   }
 });
-
-
 
 window.addEventListener("keyup", (event) => {
   switch (event.key) {
