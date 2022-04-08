@@ -29,6 +29,7 @@ class Sprite {
     };
     this.color = color;
     this.isAttacking = false;
+    this.health = 100;
   }
 
   //print out the player on canvas
@@ -121,7 +122,30 @@ function rectangleCollision({ rectangle1, rectangle2 }) {
       rectangle2.position.y + rectangle2.height
   );
 }
+function determineWinner({}) {
 
+}
+
+let timer = 10;
+function decreaseTimer() {
+  if (timer > 0) {
+    setTimeout(decreaseTimer, 1000);
+    timer --;
+    document.querySelector("#timer").innerHTML = timer;
+
+  }
+  if(timer === 0) {
+    document.querySelector("display-text").style.display = "flex";
+    if (player.health === enemy.health) {
+      document.querySelector("#display-text").innerHTML = "Tie";
+    } else if (player.health > enemy.health) {
+      document.querySelector("#display-text").innerHTML = "Player 1 wins!";
+    } else if (enemy.health > player.health) {
+      document.querySelector("#display-text").innerHTML = "Player 2 wins!";
+    }
+  }
+}
+decreaseTimer();
 function animate() {
   // put in the function you want to call again and again
   window.requestAnimationFrame(animate);
@@ -163,7 +187,8 @@ function animate() {
     player.isAttacking
   ) {
     player.isAttacking = false;
-    console.log("ATTACKSSSS");
+    enemy.health -= 20;
+    document.querySelector("#enemyHealth").style.width = enemy.health + "%";
   }
   if (
     rectangleCollision({
@@ -173,7 +198,8 @@ function animate() {
     enemy.isAttacking
   ) {
     enemy.isAttacking = false;
-    console.log("ENEMY ATTACKSSSS");
+    player.health -= 20;
+    document.querySelector("#playerHealth").style.width = player.health + "%";
   }
 }
 
