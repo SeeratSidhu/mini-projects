@@ -34,6 +34,7 @@ div:nth-child(2) {
 div:nth-child(3) {
   background-image: url(img/div-2.jpeg);
   background-size: cover;
+  background-attachment: fixed;
   height: 400px;
 }
 
