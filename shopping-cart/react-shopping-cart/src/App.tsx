@@ -28,6 +28,8 @@ export type CartItemType = {
 const getProducts = async (): Promise<CartItemType[]> => await (await fetch('https://fakestoreapi.com/products')).json();
 
 const App = () => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([] as CartItemType[]);
   const { data, isLoading, error } = useQuery<CartItemType[]>('products', getProducts)
 
   const handleAddToCart = (item : CartItemType) => null;
@@ -37,9 +39,13 @@ const App = () => {
 
   return (
     <Wrapper>
+      <Drawer anchor='right' open={isCartOpen} onClose={() => setIsCartOpen(false)}>
+      
+      </Drawer>
       <Grid container spacing ={3}>
       {data?.map((item => (
-        <Grid key={item.id}>
+        <Grid key={item.id} sm={4} xs={12}>
+          <Item item={item} handleAddToCart={handleAddToCart}/>
        </Grid>
       )))}  
       </Grid>
