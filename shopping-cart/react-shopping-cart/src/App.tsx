@@ -46,7 +46,18 @@ const App = () => {
     })
   };
 
-  const handleRemoveFromCart = () => null;
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems(prev => (
+      prev.reduce((acc, item) => {
+        if (item.id === id) {
+          if (item.quantity === 1) return acc;
+          return [...acc, {...item, quantity: item.quantity - 1}];
+        } else {
+          return [...acc, item];
+        }
+      }, [] as CartItemType[])
+    ))
+  };
 
   const getTotalItems = (items: CartItemType[]) => {
     return items.reduce((acc: number, item) => acc + item.quantity, 0);
