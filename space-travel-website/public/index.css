@@ -1,0 +1,32 @@
+/* ------ */
+/* RESET  */
+/* ------ */
+
+
+/* https://piccalil.li/blog/a-modern-css-reset/ */
+/* box-sizing */
+
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+
+/* reset margins */
+
+body,h1,h2,h3,h4,h5,p,figure,picture {
+  margin: 0;
+}
+
+body {
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* make images easier to work with; makes sure that images shrink when viewport gets narrower */
+
+img,picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* makes forms easier to work with */ 
+
